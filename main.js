@@ -137,4 +137,4 @@ setInterval(async ()=>{
 }, 4*3600*1000);
 
 
-client.login(process.env.token);
+client.login(process.env.discord_token);
