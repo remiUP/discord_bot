@@ -1,0 +1,1 @@
+sudo systemctl restart 5v5_bot.service

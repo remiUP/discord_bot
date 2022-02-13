@@ -54,7 +54,7 @@ const getAccountByName = async (name) =>{
 };
 
 const getRecentMatches = async (account) => {
-	const url = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${account.puuid}/ids?api_key=${process.env.lol_token}&startTime=${Math.floor(Date.now()/1000)-24*3600}&queue=420&count=100`;
+	const url = `https://europe.api.riotgames.com/lol/match/v5/matches/by-puuid/${account.puuid}/ids?api_key=${process.env.lol_token}&startTime=${Math.floor(Date.now()/1000)-24*3600}&count=100`;
 	const data = await axios.get(url)
 	.then(resp => {
 		if (resp.status!=200){
@@ -88,8 +88,10 @@ const displayRecentMatchesLeaderbord = async () => {
 	var Leaderboard = new MessageEmbed()
 		.setColor('#c89c38')
 		.setTitle('Nombre de ranked jouées dans les dernières 24h (allez vous doucher)')
+		.setDescription('Actualisé toutes les 4h. Tappez "leaderboard" pour le rafraîchir maintenant. Tappez votre pseudo in-game pour être ajouté a la liste des comptes trackés')
+		.setTimestamp();
 	for(var i = 0; i<scores.length; i++){
-		Leaderboard.addField(`${i+1}${i==0 ? "er" : "ième"}`, `${scores[i].username}  --  \`${scores[i].score}\` Ranked jouées`, false);
+		Leaderboard.addField(`${i+1}${i==0 ? "er" : "ième"}`, `${scores[i].username}  --  \`${scores[i].score}\` parties jouées`, false);
 	}
 
 	channel.send({ embeds: [Leaderboard] });
@@ -129,5 +131,10 @@ client.on('messageCreate', async (message) => {
 	}
 	await addTracking(message);
 });
+
+setInterval(async ()=>{
+	await displayRecentMatchesLeaderbord();
+}, 4*3600*1000);
+
 
 client.login(process.env.token);
