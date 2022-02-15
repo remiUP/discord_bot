@@ -37,7 +37,7 @@ const getAccountByName = async (name) =>{
 	.then(resp => {
 		console.log(resp.status);
 		if (resp.status!=200){
-			console.log("Unable to fetch" + name + "  " + resp.status);
+			console.log("Unable to fetch account with name :" + name + "  " + resp.status);
 			return null;
 		}
 		else{
@@ -46,7 +46,7 @@ const getAccountByName = async (name) =>{
 		}
 	})
 	.catch(error =>{
-		console.log("Unable to fetch : " + name);
+		console.log("Unable to fetch account with name (request failed): " + name);
 		return null;
 	})
 
@@ -58,7 +58,7 @@ const getRecentMatches = async (account) => {
 	const data = await axios.get(url)
 	.then(resp => {
 		if (resp.status!=200){
-			console.log("Unable to fetch" + account.name + "  " + resp.status);
+			console.log("Unable to fetch match history of " + account.name + "  " + resp.status);
 			return null;
 		}
 		else{
@@ -67,7 +67,7 @@ const getRecentMatches = async (account) => {
 		}
 	})
 	.catch(error =>{
-		console.log("Unable to fetch : " + account.name + "  " + error);
+		console.log("Unable to fetch match history (request failed) of : " + account.name + "  " + error);
 		return null;
 	})
 	return data;
@@ -78,6 +78,7 @@ const displayRecentMatchesLeaderbord = async () => {
 	var scores = [];
 	for(const account of accounts){
 		const matches = await getRecentMatches(account);
+		if(matches === null) return;
 		if(matches.length>0){
 			scores.push({username: account.name, score: matches.length});
 		} 
@@ -87,7 +88,7 @@ const displayRecentMatchesLeaderbord = async () => {
 
 	var Leaderboard = new MessageEmbed()
 		.setColor('#c89c38')
-		.setTitle('Nombre de ranked jouées dans les dernières 24h (allez vous doucher)')
+		.setTitle('Nombre de parties jouées dans les dernières 24h (allez vous doucher)')
 		.setDescription('Actualisé toutes les 4h. Tappez "leaderboard" pour le rafraîchir maintenant. Tappez votre pseudo in-game pour être ajouté a la liste des comptes trackés')
 		.setTimestamp();
 	for(var i = 0; i<scores.length; i++){
